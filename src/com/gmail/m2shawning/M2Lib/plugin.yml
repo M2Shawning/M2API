@@ -1,0 +1,5 @@
+name: M2Lib
+author: M2Shawning
+version: 0.1
+description: Library for my plugins
+main: com.gmail.m2shawning.M2Lib.M2Lib
