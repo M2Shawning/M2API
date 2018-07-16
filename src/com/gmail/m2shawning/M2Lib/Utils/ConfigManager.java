@@ -39,8 +39,6 @@ public class ConfigManager {
 
         // Loads Config File
         this.fileConfig = YamlConfiguration.loadConfiguration(file);
-
-        saveConfig();
     }
 
     public ConfigManager(Plugin plugin, String fileName) {
@@ -67,8 +65,6 @@ public class ConfigManager {
 
         // Loads Config File
         this.fileConfig = YamlConfiguration.loadConfiguration(this.file);
-
-        saveConfig();
     }
 
     public FileConfiguration getConfig() {
