@@ -1,0 +1,10 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="M2API:jar">
+    <output-path>$PROJECT_DIR$/../_Server_/plugins/</output-path>
+    <root id="archive" name="M2API.jar">
+      <element id="module-output" name="M2API" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/com/gmail/m2shawning/M2API/config.yml" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/com/gmail/m2shawning/M2API/plugin.yml" />
+    </root>
+  </artifact>
+</component>

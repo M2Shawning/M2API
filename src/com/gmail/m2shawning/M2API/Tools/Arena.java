@@ -1,6 +1,6 @@
-package com.gmail.m2shawning.M2Lib.Tools;
+package com.gmail.m2shawning.M2API.Tools;
 
-import com.gmail.m2shawning.M2Lib.Utils.ConfigManager;
+import com.gmail.m2shawning.M2API.Utils.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -13,8 +13,8 @@ import java.util.*;
 
 public class Arena {
 
-    private ConfigManager configManager;
     private String arenaName;
+    private ConfigManager configManager;
 
     public Arena(String arenaName, Plugin plugin, String fileName) {
         this.arenaName = arenaName;

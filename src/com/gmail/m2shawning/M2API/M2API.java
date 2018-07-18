@@ -1,10 +1,10 @@
-package com.gmail.m2shawning.M2Lib;
+package com.gmail.m2shawning.M2API;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class M2Lib extends JavaPlugin {
+public class M2API extends JavaPlugin {
 
     /*
     public static Arena getMiniTools() {

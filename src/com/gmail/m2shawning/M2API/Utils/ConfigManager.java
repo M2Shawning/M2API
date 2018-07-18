@@ -1,4 +1,4 @@
-package com.gmail.m2shawning.M2Lib.Utils;
+package com.gmail.m2shawning.M2API.Utils;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
