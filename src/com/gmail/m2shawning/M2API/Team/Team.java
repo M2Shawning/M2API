@@ -1,7 +1,9 @@
 package com.gmail.m2shawning.M2API.Team;
 
+import com.gmail.m2shawning.M2API.M2API;
 import com.gmail.m2shawning.M2API.Utils.ConfigManager;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -14,7 +16,10 @@ public class Team {
     private ConfigManager configManager;
 
     public Team(String teamName, Plugin plugin, String fileName) {
+
         this.teamName = teamName;
+
+        M2API.TeamArrayList.add(this);
 
         configManager = new ConfigManager(plugin, fileName);
         setDefaults();
@@ -22,7 +27,10 @@ public class Team {
     }
 
     public Team(String teamName, Plugin plugin, String fileName, File file) {
+
         this.teamName = teamName;
+
+        M2API.TeamArrayList.add(this);
 
         configManager = new ConfigManager(plugin, fileName, file);
         setDefaults();
@@ -39,10 +47,10 @@ public class Team {
     }
 
     private ArrayList<UUID> playerUUIDArrayList = new ArrayList<>();
-    private boolean friendlyFire;
-    private boolean worldInteraction;
-    private boolean blockPlace;
-    private boolean blockBreak;
+    public boolean friendlyFire;
+    public boolean blockInteract;
+    public boolean blockPlace;
+    public boolean blockBreak;
 
 
 
@@ -54,7 +62,7 @@ public class Team {
 
         configManager.getConfig().set(teamName + ".playerUUIDs", playerUUIDArrayList.toString());
         configManager.getConfig().set(teamName + ".friendlyFire", friendlyFire);
-        configManager.getConfig().set(teamName + ".worldInteraction", worldInteraction);
+        configManager.getConfig().set(teamName + ".blockInteract", blockInteract);
         configManager.getConfig().set(teamName + ".blockPlace", blockPlace);
         configManager.getConfig().set(teamName + ".blockBreak", blockBreak);
 
@@ -68,7 +76,7 @@ public class Team {
         try {
 
             friendlyFire = configManager.getConfig().getBoolean(teamName + ".friendlyFire");
-            worldInteraction = configManager.getConfig().getBoolean(teamName + ".worldInteraction");
+            blockInteract = configManager.getConfig().getBoolean(teamName + ".blockInteract");
             blockPlace = configManager.getConfig().getBoolean(teamName + ".blockPlace");
             blockBreak = configManager.getConfig().getBoolean(teamName + ".blockBreak");
 
@@ -116,9 +124,9 @@ public class Team {
     }
 
     // Checks if player is on team
-    public boolean isPlayerOnTeam(UUID playerUUID) {
+    public boolean isPlayerOnTeam(Player player) {
 
-        return playerUUIDArrayList.contains(playerUUID);
+        return playerUUIDArrayList.contains(player.getUniqueId());
     }
 
     // Return list of player on team
@@ -139,9 +147,9 @@ public class Team {
     }
 
     // Changes world interaction
-    public void setCanWorldInteract(Boolean canWorldInteract) {
+    public void setCanBlockInteract(Boolean canBlockInteract) {
 
-        worldInteraction = canWorldInteract;
+        blockInteract = canBlockInteract;
     }
 
     // Changes if players can place blocks

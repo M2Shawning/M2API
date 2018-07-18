@@ -1,5 +1,6 @@
 package com.gmail.m2shawning.M2API.Arena;
 
+import com.gmail.m2shawning.M2API.M2API;
 import com.gmail.m2shawning.M2API.Utils.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,7 +18,10 @@ public class Arena {
     private ConfigManager configManager;
 
     public Arena(String arenaName, Plugin plugin, String fileName) {
+
         this.arenaName = arenaName;
+
+        M2API.ArenaArrayList.add(this);
 
         configManager = new ConfigManager(plugin, fileName);
         setDefaults();
@@ -25,7 +29,10 @@ public class Arena {
     }
 
     public Arena(String arenaName, Plugin plugin, String fileName, File file) {
+
         this.arenaName = arenaName;
+
+        M2API.ArenaArrayList.add(this);
 
         configManager = new ConfigManager(plugin, fileName, file);
         setDefaults();
@@ -52,10 +59,10 @@ public class Arena {
     private int minX, minY, minZ;
     private int maxX, maxY, maxZ;
     private String worldName;
-    private boolean friendlyFire;
-    private boolean worldInteraction;
-    private boolean blockPlace;
-    private boolean blockBreak;
+    public boolean playerDamage;
+    public boolean blockInteract;
+    public boolean blockPlace;
+    public boolean blockBreak;
     private ArrayList<String> coordArrayList = new ArrayList<>();
 
 
@@ -74,8 +81,8 @@ public class Arena {
         configManager.getConfig().set(arenaName + ".maxY", maxY);
         configManager.getConfig().set(arenaName + ".maxZ", maxZ);
 
-        configManager.getConfig().set(arenaName + ".friendlyFire", friendlyFire);
-        configManager.getConfig().set(arenaName + ".worldInteraction", worldInteraction);
+        configManager.getConfig().set(arenaName + ".playerDamage", playerDamage);
+        configManager.getConfig().set(arenaName + ".blockInteract", blockInteract);
         configManager.getConfig().set(arenaName + ".blockPlace", blockPlace);
         configManager.getConfig().set(arenaName + ".blockBreak", blockBreak);
 
@@ -98,10 +105,10 @@ public class Arena {
             worldName = configManager.getConfig().getString(arenaName + ".worldName");
 
             // Read property data from the data file
-            friendlyFire = configManager.getConfig().getBoolean(arenaName + ".friendlyFire");
-            worldInteraction= configManager.getConfig().getBoolean(arenaName + ".worldInteraction");
-            blockPlace= configManager.getConfig().getBoolean(arenaName + ".blockPlace");
-            blockBreak= configManager.getConfig().getBoolean(arenaName + ".blockBreak");
+            playerDamage = configManager.getConfig().getBoolean(arenaName + ".playerDamage");
+            blockInteract = configManager.getConfig().getBoolean(arenaName + ".blockInteract");
+            blockPlace = configManager.getConfig().getBoolean(arenaName + ".blockPlace");
+            blockBreak = configManager.getConfig().getBoolean(arenaName + ".blockBreak");
 
         } catch (NullPointerException e) {
 
@@ -386,19 +393,19 @@ public class Arena {
 
 
 
-    // Team Permissions
+    // Area Permissions
     // -----------------------------------------------------------------------------------------------------------------
 
     // Changes friendly fire
-    public void setCanFriendlyFire(Boolean canFriendlyFire) {
+    public void setCanPlayerDamage(Boolean canPlayerDamage) {
 
-        friendlyFire = canFriendlyFire;
+        playerDamage = canPlayerDamage;
     }
 
     // Changes world interaction
-    public void setCanWorldInteract(Boolean canWorldInteract) {
+    public void setCanBlockInteract(Boolean canBlockInteract) {
 
-        worldInteraction = canWorldInteract;
+        blockInteract = canBlockInteract;
     }
 
     // Changes if players can place blocks
