@@ -4,30 +4,103 @@ import com.gmail.m2shawning.M2Lib.Utils.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 
+import java.io.File;
 import java.util.*;
 
-public class MiniTools {
+public class Arena {
 
     private ConfigManager configManager;
-    public MiniTools(ConfigManager configManager, String areaName) {
-        this.configManager = configManager;
+    private String arenaName;
+
+    public Arena(String arenaName, Plugin plugin, String fileName) {
+        this.arenaName = arenaName;
+
+        configManager = new ConfigManager(plugin, fileName);
     }
 
-    // Area Creation
+    public Arena(String arenaName, Plugin plugin, String fileName, File file) {
+        this.arenaName = arenaName;
+
+        configManager = new ConfigManager(plugin, fileName, file);
+    }
+
+    private int minX, minY, minZ;
+    private int maxX, maxY, maxZ;
+    private String worldName;
+    private ArrayList<String> coordArrayList = new ArrayList<>();
+
+
+
+    // Configuration Manager
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // Saves the data file
+    public void saveFile() {
+
+        configManager.saveConfig();
+        loadFile();
+    }
+
+    // Loads the data file
+    public void loadFile() {
+
+        try {
+
+            // Read general location data from the data file
+            minX = configManager.getConfig().getInt(arenaName + ".minX");
+            minY = configManager.getConfig().getInt(arenaName + ".minY");
+            minZ = configManager.getConfig().getInt(arenaName + ".minZ");
+            maxX = configManager.getConfig().getInt(arenaName + ".maxX");
+            maxY = configManager.getConfig().getInt(arenaName + ".maxY");
+            maxZ = configManager.getConfig().getInt(arenaName + ".maxZ");
+            worldName = configManager.getConfig().getString(arenaName + ".worldName");
+
+        } catch (NullPointerException e) {
+
+        }
+
+        try {
+
+            // Read coordinates from the data file
+            for (String key : configManager.getConfig().getConfigurationSection(arenaName + ".SpawnPoints").getKeys(false)) {
+                coordArrayList.add(configManager.getConfig().getString(arenaName + ".SpawnPoints." + key + ".spawnCoord"));
+
+            }
+
+        } catch (NullPointerException e) {
+
+        }
+    }
+
+    // Returns FileConfiguration for the data file
+    public FileConfiguration getFile() {
+
+        return configManager.getConfig();
+    }
+
+
+
+    // Arena Creation
     // -----------------------------------------------------------------------------------------------------------------
 
     // Generates a the given game area
     // Returns false if locations are not in the same world
-    public boolean createArea(String areaName, Location loc1, Location loc2) {
+    public void createArea(Location loc1, Location loc2) {
 
         if (!(loc1.getWorld().equals(loc2.getWorld()))) {
-            return false;
+            return;
         }
 
-        int minX = loc1.getBlockX(), minY = loc1.getBlockY(), minZ = loc1.getBlockZ();
-        int maxX = loc2.getBlockX(), maxY = loc2.getBlockY(), maxZ = loc2.getBlockZ();
+        minX = loc1.getBlockX();
+        minY = loc1.getBlockY();
+        minZ = loc1.getBlockZ();
+        maxX = loc2.getBlockX();
+        maxY = loc2.getBlockY();
+        maxZ = loc2.getBlockZ();
         int temp;
 
         if (minX > maxX) {
@@ -46,17 +119,16 @@ public class MiniTools {
             maxZ = temp;
         }
 
-        configManager.getConfig().set("Areas." + areaName + ".worldName", loc1.getWorld().getName());
-        configManager.getConfig().set("Areas." + areaName + ".minX", minX);
-        configManager.getConfig().set("Areas." + areaName + ".minY", minY);
-        configManager.getConfig().set("Areas." + areaName + ".minZ", minZ);
-        configManager.getConfig().set("Areas." + areaName + ".maxX", maxX);
-        configManager.getConfig().set("Areas." + areaName + ".maxY", maxY);
-        configManager.getConfig().set("Areas." + areaName + ".maxZ", maxZ);
+        configManager.getConfig().set(arenaName + ".worldName", loc1.getWorld().getName());
+        configManager.getConfig().set(arenaName + ".minX", minX);
+        configManager.getConfig().set(arenaName + ".minY", minY);
+        configManager.getConfig().set(arenaName + ".minZ", minZ);
+        configManager.getConfig().set(arenaName + ".maxX", maxX);
+        configManager.getConfig().set(arenaName + ".maxY", maxY);
+        configManager.getConfig().set(arenaName + ".maxZ", maxZ);
 
-        configManager.saveConfig();
-
-        return true;
+        saveFile();
+        return;
     }
 
 
@@ -65,9 +137,11 @@ public class MiniTools {
     // -----------------------------------------------------------------------------------------------------------------
 
     // Deletes a given game area
-    public void deleteArea(String areaName) {
+    public void deleteArea() {
 
-        configManager.getConfig().set("Areas." + areaName, null);
+        configManager.getConfig().set(arenaName, null);
+
+        saveFile();
     }
 
 
@@ -76,7 +150,7 @@ public class MiniTools {
     // -----------------------------------------------------------------------------------------------------------------
 
     // Creates player spawn points
-    public void createPlayerSpawnPoint(String areaName, String pointName, Location loc) {
+    public void createPlayerSpawnPoint(String pointName, Location loc) {
 
         String coordString = "";
         coordString += Integer.toString(loc.getBlockX());
@@ -85,7 +159,9 @@ public class MiniTools {
         coordString += (" " + Integer.toString((int)loc.getYaw()));
         coordString += (" " + Float.toString((int)loc.getPitch()));
 
-        configManager.getConfig().set("SpawnPoints." + areaName + "." + pointName + ".spawnCoord", coordString);
+        configManager.getConfig().set(arenaName + ".SpawnPoints." + pointName + ".spawnCoord", coordString);
+
+        saveFile();
     }
 
 
@@ -94,9 +170,11 @@ public class MiniTools {
     // -----------------------------------------------------------------------------------------------------------------
 
     // Deletes a given spawn point
-    public void deletePlayerSpawnPoint(String areaName, String pointName) {
+    public void deletePlayerSpawnPoint(String pointName) {
 
-        configManager.getConfig().set("SpawnPoints." + areaName + "." + pointName, null);
+        configManager.getConfig().set(arenaName + ".SpawnPoints." + pointName, null);
+
+        saveFile();
     }
 
 
@@ -105,21 +183,14 @@ public class MiniTools {
     // -----------------------------------------------------------------------------------------------------------------
 
     // Determines if player is within the given area
-    public boolean isPlayerInArea(String areaName, Player player) {
+    public boolean isPlayerInArea(Player player) {
 
-        String worldName = configManager.getConfig().getString("Areas." + areaName + ".worldName");
         if (player.getWorld().getName().equals(worldName)) {
 
-            int minX = configManager.getConfig().getInt("Areas." + areaName + ".minX");
-            int maxX = configManager.getConfig().getInt("Areas." + areaName + ".maxX");
             if ((player.getLocation().getBlockX() >= minX) && (player.getLocation().getBlockX() <= maxX)) {
 
-                int minY = configManager.getConfig().getInt("Areas." + areaName + ".minY");
-                int maxY = configManager.getConfig().getInt("Areas." + areaName + ".maxY");
                 if ((player.getLocation().getBlockY() >= minY) && (player.getLocation().getBlockY() <= maxY)) {
 
-                    int minZ = configManager.getConfig().getInt("Areas." + areaName + ".minZ");
-                    int maxZ = configManager.getConfig().getInt("Areas." + areaName + ".maxZ");
                     if ((player.getLocation().getBlockZ() >= minZ) && (player.getLocation().getBlockZ() <= maxZ)) {
                         return true;
                     }
@@ -132,19 +203,11 @@ public class MiniTools {
 
     // Returns an ArrayList of all player UUIDs that are within the specified area
     // Returns null if no players in playerCollection
-    public ArrayList<UUID> getPlayersUUIDListInArea(String areaName, Collection<? extends Player> playerCollection) {
+    public ArrayList<UUID> getPlayersUUIDListInArea(Collection<? extends Player> playerCollection) {
 
         if (playerCollection.isEmpty()) {
             return null;
         }
-
-        String worldName = configManager.getConfig().getString("Areas." + areaName + ".worldName");
-        int minX = configManager.getConfig().getInt("Areas." + areaName + ".minX");
-        int minY = configManager.getConfig().getInt("Areas." + areaName + ".minY");
-        int minZ = configManager.getConfig().getInt("Areas." + areaName + ".minZ");
-        int maxX = configManager.getConfig().getInt("Areas." + areaName + ".maxX");
-        int maxY = configManager.getConfig().getInt("Areas." + areaName + ".maxY");
-        int maxZ = configManager.getConfig().getInt("Areas." + areaName + ".maxZ");
 
         ArrayList<UUID> tempPlayersUUIDList = new ArrayList<>();
 
@@ -169,15 +232,8 @@ public class MiniTools {
     // -----------------------------------------------------------------------------------------------------------------
 
     // Randomly spawns players within a defined area
-    public void spawnAtRandom(String areaName, ArrayList<UUID> playerUUIDArrayList) {
+    public void spawnAtRandom(ArrayList<UUID> playerUUIDArrayList) {
 
-        String worldName = configManager.getConfig().getString("Areas." + areaName + ".worldName");
-        int minX = configManager.getConfig().getInt("Areas." + areaName + ".minX");
-        int minY = configManager.getConfig().getInt("Areas." + areaName + ".minY");
-        int minZ = configManager.getConfig().getInt("Areas." + areaName + ".minZ");
-        int maxX = configManager.getConfig().getInt("Areas." + areaName + ".maxX");
-        int maxY = configManager.getConfig().getInt("Areas." + areaName + ".maxY");
-        int maxZ = configManager.getConfig().getInt("Areas." + areaName + ".maxZ");
         int x, y, z, yaw;
 
         Player player;
@@ -206,15 +262,8 @@ public class MiniTools {
     }
 
     // Randomly spawns a player within a defined area
-    public void spawnAtRandom(String areaName, UUID playerUUID) {
+    public void spawnAtRandom(UUID playerUUID) {
 
-        String worldName = configManager.getConfig().getString("Areas." + areaName + ".worldName");
-        int minX = configManager.getConfig().getInt("Areas." + areaName + ".minX");
-        int minY = configManager.getConfig().getInt("Areas." + areaName + ".minY");
-        int minZ = configManager.getConfig().getInt("Areas." + areaName + ".minZ");
-        int maxX = configManager.getConfig().getInt("Areas." + areaName + ".maxX");
-        int maxY = configManager.getConfig().getInt("Areas." + areaName + ".maxY");
-        int maxZ = configManager.getConfig().getInt("Areas." + areaName + ".maxZ");
         int x, y, z, yaw;
 
         Random rand = new Random();
@@ -240,7 +289,7 @@ public class MiniTools {
     }
 
     // Randomly spawns players at predefined spawn points
-    public void randomSpawnAtSpawnPoints(String areaName, ArrayList<UUID> playerUUIDArrayList) {
+    public void randomSpawnAtSpawnPoints(ArrayList<UUID> playerUUIDArrayList) {
 
         // Random Number Gen
         Random rand = new Random();
@@ -248,18 +297,10 @@ public class MiniTools {
         // Declare Variables
         String coordString;
         int[] coordInt;
-        int yaw = rand.nextInt(360);
 
         // Create temporary Player UUID ArrayList
         ArrayList<UUID>tempPlayerUUIDArrayList = new ArrayList<>(playerUUIDArrayList);
         Collections.shuffle(tempPlayerUUIDArrayList, new Random());
-
-        // Read coordinates from the storage file
-        ArrayList<String> coordArrayList = new ArrayList<>();
-        for (String key : configManager.getConfig().getConfigurationSection("SpawnPoints." + areaName).getKeys(false)) {
-            coordArrayList.add(configManager.getConfig().getString("SpawnPoints." + areaName + "." + key + ".spawnCoord"));
-        }
-        Collections.shuffle(coordArrayList, new Random());
 
         // Cycle through playerUUID ArrayList and 'spawn' players
         int counter = 0;
@@ -268,8 +309,8 @@ public class MiniTools {
             coordString = coordArrayList.get(counter);
             coordInt = Arrays.stream(coordString.split(" ")).mapToInt(Integer::parseInt).toArray();
 
-            Location loc = new Location(Bukkit.getWorld(configManager.getConfig().getString("Areas." + areaName + ".worldName")),
-                    coordInt[0] + 0.5, coordInt[1], coordInt[2] + 0.5, yaw, 0);
+            Location loc = new Location(Bukkit.getWorld(worldName),
+                    (coordInt[0] + 0.5), coordInt[1], (coordInt[2] + 0.5), coordInt[3], coordInt[4]);
 
             Bukkit.getPlayer(playerUUID).teleport(loc);
             counter++;
@@ -277,40 +318,31 @@ public class MiniTools {
     }
 
     // Randomly spawns a player at a predefined spawn point
-    public void randomSpawnAtSpawnPoints(String areaName, UUID playerUUID) {
+    public void randomSpawnAtSpawnPoints(UUID playerUUID) {
 
         Random rand = new Random();
 
         String coordString;
         int[] coordInt;
 
-        // Read coordinates from the storage file
-        ArrayList<String> coordArrayList = new ArrayList<>();
-        for (String key : configManager.getConfig().getConfigurationSection("SpawnPoints." + areaName).getKeys(false)) {
-            coordArrayList.add(configManager.getConfig().getString("SpawnPoints." + areaName + "." + key + ".spawnCoord"));
-        }
-        Collections.shuffle(coordArrayList, new Random());
-
         coordString = coordArrayList.get(rand.nextInt(coordArrayList.size()));
         coordInt = Arrays.stream(coordString.split(" ")).mapToInt(Integer::parseInt).toArray();
 
-        Location loc = new Location(Bukkit.getWorld(configManager.getConfig().getString("Areas." + areaName +
-                ".worldName")), coordInt[0] + 0.5, coordInt[1], coordInt[2] + 0.5, coordInt[3], coordInt[4]);
+        Location loc = new Location(Bukkit.getWorld(worldName), (coordInt[0] + 0.5), coordInt[1], (coordInt[2] + 0.5), coordInt[3], coordInt[4]);
 
         Bukkit.getPlayer(playerUUID).teleport(loc);
     }
 
     // Spawns a player at a predefined spawn point
-    public void specificSpawnAtSpawnPoint(String areaName, String spawnPointName, UUID playerUUID) {
+    public void specificSpawnAtSpawnPoint(String spawnPointName, UUID playerUUID) {
 
         String coordString;
         int[] coordInt;
 
-        coordString = configManager.getConfig().getString("SpawnPoints." + areaName + "." + spawnPointName + ".spawnCoord");
+        coordString = configManager.getConfig().getString(arenaName + ".SpawnPoints." + spawnPointName + ".spawnCoord");
         coordInt = Arrays.stream(coordString.split(" ")).mapToInt(Integer::parseInt).toArray();
 
-        Location loc = new Location(Bukkit.getWorld(configManager.getConfig().getString("Areas." + areaName +
-                ".worldName")), coordInt[0] + 0.5, coordInt[1], coordInt[2] + 0.5, coordInt[3], coordInt[4]);
+        Location loc = new Location(Bukkit.getWorld(worldName), (coordInt[0] + 0.5), coordInt[1], (coordInt[2] + 0.5), coordInt[3], coordInt[4]);
 
         Bukkit.getPlayer(playerUUID).teleport(loc);
     }
