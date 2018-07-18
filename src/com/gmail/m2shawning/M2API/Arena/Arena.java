@@ -1,4 +1,4 @@
-package com.gmail.m2shawning.M2API.Tools;
+package com.gmail.m2shawning.M2API.Arena;
 
 import com.gmail.m2shawning.M2API.Utils.ConfigManager;
 import org.bukkit.Bukkit;
@@ -20,17 +20,42 @@ public class Arena {
         this.arenaName = arenaName;
 
         configManager = new ConfigManager(plugin, fileName);
+        setDefaults();
+        loadFile();
     }
 
     public Arena(String arenaName, Plugin plugin, String fileName, File file) {
         this.arenaName = arenaName;
 
         configManager = new ConfigManager(plugin, fileName, file);
+        setDefaults();
+        loadFile();
+    }
+
+    // Sets default file values
+    private void setDefaults() {
+
+        configManager.getConfig().addDefault(arenaName + ".worldName", "world");
+        configManager.getConfig().addDefault(arenaName + ".minX", 0);
+        configManager.getConfig().addDefault(arenaName + ".minY", 0);
+        configManager.getConfig().addDefault(arenaName + ".minZ", 0);
+        configManager.getConfig().addDefault(arenaName + ".maxX", 0);
+        configManager.getConfig().addDefault(arenaName + ".maxY", 0);
+        configManager.getConfig().addDefault(arenaName + ".maxZ", 0);
+
+        configManager.getConfig().addDefault(arenaName + ".friendlyFire", false);
+        configManager.getConfig().addDefault(arenaName + ".worldInteraction", false);
+        configManager.getConfig().addDefault(arenaName + ".blockPlace", false);
+        configManager.getConfig().addDefault(arenaName + ".blockBreak", false);
     }
 
     private int minX, minY, minZ;
     private int maxX, maxY, maxZ;
     private String worldName;
+    private boolean friendlyFire;
+    private boolean worldInteraction;
+    private boolean blockPlace;
+    private boolean blockBreak;
     private ArrayList<String> coordArrayList = new ArrayList<>();
 
 
@@ -40,6 +65,19 @@ public class Arena {
 
     // Saves the data file
     public void saveFile() {
+
+        configManager.getConfig().set(arenaName + ".worldName", worldName);
+        configManager.getConfig().set(arenaName + ".minX", minX);
+        configManager.getConfig().set(arenaName + ".minY", minY);
+        configManager.getConfig().set(arenaName + ".minZ", minZ);
+        configManager.getConfig().set(arenaName + ".maxX", maxX);
+        configManager.getConfig().set(arenaName + ".maxY", maxY);
+        configManager.getConfig().set(arenaName + ".maxZ", maxZ);
+
+        configManager.getConfig().set(arenaName + ".friendlyFire", friendlyFire);
+        configManager.getConfig().set(arenaName + ".worldInteraction", worldInteraction);
+        configManager.getConfig().set(arenaName + ".blockPlace", blockPlace);
+        configManager.getConfig().set(arenaName + ".blockBreak", blockBreak);
 
         configManager.saveConfig();
         loadFile();
@@ -59,6 +97,12 @@ public class Arena {
             maxZ = configManager.getConfig().getInt(arenaName + ".maxZ");
             worldName = configManager.getConfig().getString(arenaName + ".worldName");
 
+            // Read property data from the data file
+            friendlyFire = configManager.getConfig().getBoolean(arenaName + ".friendlyFire");
+            worldInteraction= configManager.getConfig().getBoolean(arenaName + ".worldInteraction");
+            blockPlace= configManager.getConfig().getBoolean(arenaName + ".blockPlace");
+            blockBreak= configManager.getConfig().getBoolean(arenaName + ".blockBreak");
+
         } catch (NullPointerException e) {
 
         }
@@ -66,6 +110,7 @@ public class Arena {
         try {
 
             // Read coordinates from the data file
+            coordArrayList.clear();
             for (String key : configManager.getConfig().getConfigurationSection(arenaName + ".SpawnPoints").getKeys(false)) {
                 coordArrayList.add(configManager.getConfig().getString(arenaName + ".SpawnPoints." + key + ".spawnCoord"));
 
@@ -101,6 +146,7 @@ public class Arena {
         maxX = loc2.getBlockX();
         maxY = loc2.getBlockY();
         maxZ = loc2.getBlockZ();
+        worldName = loc1.getWorld().getName();
         int temp;
 
         if (minX > maxX) {
@@ -119,16 +165,7 @@ public class Arena {
             maxZ = temp;
         }
 
-        configManager.getConfig().set(arenaName + ".worldName", loc1.getWorld().getName());
-        configManager.getConfig().set(arenaName + ".minX", minX);
-        configManager.getConfig().set(arenaName + ".minY", minY);
-        configManager.getConfig().set(arenaName + ".minZ", minZ);
-        configManager.getConfig().set(arenaName + ".maxX", maxX);
-        configManager.getConfig().set(arenaName + ".maxY", maxY);
-        configManager.getConfig().set(arenaName + ".maxZ", maxZ);
-
         saveFile();
-        return;
     }
 
 
@@ -345,5 +382,34 @@ public class Arena {
         Location loc = new Location(Bukkit.getWorld(worldName), (coordInt[0] + 0.5), coordInt[1], (coordInt[2] + 0.5), coordInt[3], coordInt[4]);
 
         Bukkit.getPlayer(playerUUID).teleport(loc);
+    }
+
+
+
+    // Team Permissions
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // Changes friendly fire
+    public void setCanFriendlyFire(Boolean canFriendlyFire) {
+
+        friendlyFire = canFriendlyFire;
+    }
+
+    // Changes world interaction
+    public void setCanWorldInteract(Boolean canWorldInteract) {
+
+        worldInteraction = canWorldInteract;
+    }
+
+    // Changes if players can place blocks
+    public void setCanBlockPlace(Boolean canBlockPlace) {
+
+        blockPlace = canBlockPlace;
+    }
+
+    // Changes if players can break blocks
+    public void setCanBlockBreak(Boolean canBlockBreak) {
+
+        blockBreak = canBlockBreak;
     }
 }
