@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public class Team {
 
-    private String teamName;
+    public String teamName;
     private ConfigManager configManager;
 
     public Team(String teamName, Plugin plugin, String fileName) {

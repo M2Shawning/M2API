@@ -6,6 +6,7 @@ import com.gmail.m2shawning.M2API.Team.Team;
 import com.gmail.m2shawning.M2API.Team.TeamListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.ArrayList;
@@ -38,5 +39,16 @@ public class M2API extends JavaPlugin {
             n[i] = new Arena("Test");
             n[1].saveFile();
         }*/
+    }
+
+    public static Team teamPlayerIsOn(Player player) {
+
+        for (Team team : TeamArrayList) {
+            if (team.isPlayerOnTeam(player)) {
+                return team;
+            }
+        }
+
+        return null;
     }
 }

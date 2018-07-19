@@ -1,6 +1,7 @@
 package com.gmail.m2shawning.M2API.Arena;
 
 import com.gmail.m2shawning.M2API.M2API;
+import com.gmail.m2shawning.M2API.Team.Team;
 import com.gmail.m2shawning.M2API.Utils.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,7 +15,7 @@ import java.util.*;
 
 public class Arena {
 
-    private String arenaName;
+    public String arenaName;
     private ConfigManager configManager;
 
     public Arena(String arenaName, Plugin plugin, String fileName) {
@@ -193,7 +194,7 @@ public class Arena {
     // Spawn Point Creation
     // -----------------------------------------------------------------------------------------------------------------
 
-    // Creates player spawn points
+    // Creates player spawn point
     public void createPlayerSpawnPoint(String pointName, Location loc) {
 
         String coordString = "";
@@ -208,17 +209,56 @@ public class Arena {
         saveFile();
     }
 
+    // Creates team spawn point
+    public void createTeamSpawnPoint(String pointName, String teamName, Location loc) {
+
+        String coordString = "";
+        coordString += Integer.toString(loc.getBlockX());
+        coordString += (" " + Integer.toString(loc.getBlockY()));
+        coordString += (" " + Integer.toString(loc.getBlockZ()));
+        coordString += (" " + Integer.toString((int)loc.getYaw()));
+        coordString += (" " + Float.toString((int)loc.getPitch()));
+
+        configManager.getConfig().set(arenaName + ".TeamSpawnPoints." + teamName +  "." + pointName + ".spawnCoord", coordString);
+
+        saveFile();
+    }
+
 
 
     // Spawn Point Deletion
     // -----------------------------------------------------------------------------------------------------------------
 
-    // Deletes a given spawn point
+    // Deletes a given player spawn point
     public void deletePlayerSpawnPoint(String pointName) {
 
         configManager.getConfig().set(arenaName + ".SpawnPoints." + pointName, null);
 
         saveFile();
+    }
+
+    // Deletes all player spawn points for a given arena
+    public void deleteAllPlayerSpawnPoints() {
+
+        configManager.getConfig().set(arenaName + ".SpawnPoints", null);
+
+        saveFile();
+    }
+
+    // Deletes a given team spawn point
+    public void deleteTeamSpawnPoint(String pointName, String teamName) {
+
+        configManager.getConfig().set(arenaName + ".TeamSpawnPoints." + teamName +  "." + pointName + ".spawnCoord", null);
+
+        saveFile();
+    }
+
+    // Deletes all team spawn points for a given area
+    public void deleteAllTeamSpawnPoints(String teamName) {
+
+        configManager.getConfig().set(arenaName + ".TeamSpawnPoints." + teamName, null);
+
+
     }
 
 
@@ -353,8 +393,7 @@ public class Arena {
             coordString = coordArrayList.get(counter);
             coordInt = Arrays.stream(coordString.split(" ")).mapToInt(Integer::parseInt).toArray();
 
-            Location loc = new Location(Bukkit.getWorld(worldName),
-                    (coordInt[0] + 0.5), coordInt[1], (coordInt[2] + 0.5), coordInt[3], coordInt[4]);
+            Location loc = new Location(Bukkit.getWorld(worldName), coordInt[0], coordInt[1], coordInt[2], coordInt[3], coordInt[4]);
 
             Bukkit.getPlayer(playerUUID).teleport(loc);
             counter++;
@@ -372,7 +411,7 @@ public class Arena {
         coordString = coordArrayList.get(rand.nextInt(coordArrayList.size()));
         coordInt = Arrays.stream(coordString.split(" ")).mapToInt(Integer::parseInt).toArray();
 
-        Location loc = new Location(Bukkit.getWorld(worldName), (coordInt[0] + 0.5), coordInt[1], (coordInt[2] + 0.5), coordInt[3], coordInt[4]);
+        Location loc = new Location(Bukkit.getWorld(worldName), coordInt[0], coordInt[1], coordInt[2], coordInt[3], coordInt[4]);
 
         Bukkit.getPlayer(playerUUID).teleport(loc);
     }
@@ -386,9 +425,37 @@ public class Arena {
         coordString = configManager.getConfig().getString(arenaName + ".SpawnPoints." + spawnPointName + ".spawnCoord");
         coordInt = Arrays.stream(coordString.split(" ")).mapToInt(Integer::parseInt).toArray();
 
-        Location loc = new Location(Bukkit.getWorld(worldName), (coordInt[0] + 0.5), coordInt[1], (coordInt[2] + 0.5), coordInt[3], coordInt[4]);
+        Location loc = new Location(Bukkit.getWorld(worldName), coordInt[0], coordInt[1], coordInt[2], coordInt[3], coordInt[4]);
 
         Bukkit.getPlayer(playerUUID).teleport(loc);
+    }
+
+
+
+    // Team Spawning
+    // -----------------------------------------------------------------------------------------------------------------
+
+    // Spawn a team of players at a specified spawn point
+    public void spawnTeamAtSpawnPoints(ArrayList<UUID> playerUUIDArrayList) {
+
+        // WORK IN PROGRESS, REPEAT randomSpawnAtSpawnPoints FOR AN ARRAY
+        // MUST LOOP THROUGH SHIT AGAIN
+        // FIX STUPID STRING ARRAY STUFF FOR EVERYTHING LATER WHEN CONFIRMED
+
+        Team team;
+        String coordString;
+        int[] coordInt;
+
+        for (UUID playerUUID : playerUUIDArrayList) {
+
+            team = M2API.teamPlayerIsOn(Bukkit.getPlayer(playerUUID));
+            if (team == null) {
+                Bukkit.getConsoleSender().sendMessage("[M2API] Player Not On A Team: " + Bukkit.getPlayer(playerUUID).getName());
+                return;
+            }
+
+
+        }
     }
 
 
