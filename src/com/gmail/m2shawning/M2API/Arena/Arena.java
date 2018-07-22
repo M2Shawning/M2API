@@ -60,11 +60,16 @@ public class Arena {
     private int minX, minY, minZ;
     private int maxX, maxY, maxZ;
     private String worldName;
-    public boolean playerDamage;
-    public boolean blockInteract;
-    public boolean blockPlace;
-    public boolean blockBreak;
-    private ArrayList<String> coordArrayList = new ArrayList<>();
+    protected boolean playerDamage;
+    protected boolean blockInteract;
+    protected boolean blockPlace;
+    protected boolean blockBreak;
+
+    private ArrayList<String> coordNameList = new ArrayList<>();
+    private ArrayList<List<Integer>> coordArrayList = new ArrayList<>();
+
+    private ArrayList<String> teamWithCoordNameList = new ArrayList<>();
+    private ArrayList<ArrayList<List<Integer>>> teamsCoordArrayList = new ArrayList<>();
 
 
 
@@ -94,6 +99,7 @@ public class Arena {
     // Loads the data file
     public void loadFile() {
 
+        // Deals with Arena variables
         try {
 
             // Read general location data from the data file
@@ -113,19 +119,61 @@ public class Arena {
 
         } catch (NullPointerException e) {
 
+            e.printStackTrace();
         }
 
+        // Deals with standard Spawn Point variables
         try {
 
-            // Read coordinates from the data file
+            // Clears Variables
+            coordNameList.clear();
             coordArrayList.clear();
-            for (String key : configManager.getConfig().getConfigurationSection(arenaName + ".SpawnPoints").getKeys(false)) {
-                coordArrayList.add(configManager.getConfig().getString(arenaName + ".SpawnPoints." + key + ".spawnCoord"));
 
+            // Loops through Spawn Points
+            for (String key : configManager.getConfig().getConfigurationSection(arenaName + ".SpawnPoints").getKeys(false)) {
+
+                // Sets Spawn Point Name and Spawn Point Integer ArrayList to variables
+                coordNameList.add(key);
+                coordArrayList.add(configManager.getConfig().getIntegerList(arenaName + ".SpawnPoints." + key + ".spawnCoord"));
             }
 
         } catch (NullPointerException e) {
 
+            e.printStackTrace();
+        }
+
+        // Deals with Team Spawn Point variables
+        try {
+
+            // Creates temporary variable
+            ArrayList<List<Integer>> tempArrayOfIntegerList = new ArrayList<>();
+
+            // Clears Variables
+            teamWithCoordNameList.clear();
+            teamsCoordArrayList.clear();
+
+            // Loops through teams
+            for (Team team : M2API.TeamArrayList) {
+
+                // Clears temporary variable for each team and adds Team Name to ArrayList
+                tempArrayOfIntegerList.clear();
+                teamWithCoordNameList.add(team.teamName);
+
+                // Loops through each teams Spawn Points
+                for (String key : configManager.getConfig().getConfigurationSection(arenaName + ".TeamSpawnPoints." + team.teamName).getKeys(false)) {
+
+                    // Adds Spawn Point Integer ArrayList to temporary ArrayList
+                    tempArrayOfIntegerList.add(configManager.getConfig().getIntegerList(arenaName + ".TeamSpawnPoints." + team.teamName + "." + key + ".spawnCoord"));
+                }
+
+                // Adds temporary ArrayList to full ArrayList
+                teamsCoordArrayList.add(tempArrayOfIntegerList);
+            }
+
+
+        } catch (NullPointerException e){
+
+            e.printStackTrace();
         }
     }
 
@@ -142,8 +190,9 @@ public class Arena {
 
     // Generates a the given game area
     // Returns false if locations are not in the same world
-    public void createArea(Location loc1, Location loc2) {
+    public void createArena(Location loc1, Location loc2) {
 
+        // Makes sure locations are in the same world
         if (!(loc1.getWorld().equals(loc2.getWorld()))) {
             return;
         }
@@ -178,13 +227,17 @@ public class Arena {
 
 
 
-    // Area Deletion
+    // Arena Deletion
     // -----------------------------------------------------------------------------------------------------------------
 
     // Deletes a given game area
-    public void deleteArea() {
+    public void deleteArena() {
 
         configManager.getConfig().set(arenaName, null);
+        configManager.saveConfig();
+
+        // Loads file before executing save method to also wipe variables
+        loadFile();
 
         saveFile();
     }
@@ -197,14 +250,14 @@ public class Arena {
     // Creates player spawn point
     public void createPlayerSpawnPoint(String pointName, Location loc) {
 
-        String coordString = "";
-        coordString += Integer.toString(loc.getBlockX());
-        coordString += (" " + Integer.toString(loc.getBlockY()));
-        coordString += (" " + Integer.toString(loc.getBlockZ()));
-        coordString += (" " + Integer.toString((int)loc.getYaw()));
-        coordString += (" " + Float.toString((int)loc.getPitch()));
+        ArrayList<Integer> coordIntegerArrayList = new ArrayList<>();
+        coordIntegerArrayList.add(loc.getBlockX());
+        coordIntegerArrayList.add(loc.getBlockY());
+        coordIntegerArrayList.add(loc.getBlockZ());
+        coordIntegerArrayList.add((int)loc.getYaw());
+        coordIntegerArrayList.add((int)loc.getPitch());
 
-        configManager.getConfig().set(arenaName + ".SpawnPoints." + pointName + ".spawnCoord", coordString);
+        configManager.getConfig().set(arenaName + ".SpawnPoints." + pointName + ".spawnCoord", coordIntegerArrayList);
 
         saveFile();
     }
@@ -212,14 +265,16 @@ public class Arena {
     // Creates team spawn point
     public void createTeamSpawnPoint(String pointName, String teamName, Location loc) {
 
-        String coordString = "";
-        coordString += Integer.toString(loc.getBlockX());
-        coordString += (" " + Integer.toString(loc.getBlockY()));
-        coordString += (" " + Integer.toString(loc.getBlockZ()));
-        coordString += (" " + Integer.toString((int)loc.getYaw()));
-        coordString += (" " + Float.toString((int)loc.getPitch()));
+        // WORK IN PROGRESS
 
-        configManager.getConfig().set(arenaName + ".TeamSpawnPoints." + teamName +  "." + pointName + ".spawnCoord", coordString);
+        ArrayList<Integer> coordIntegerArrayList = new ArrayList<>();
+        coordIntegerArrayList.add(loc.getBlockX());
+        coordIntegerArrayList.add(loc.getBlockY());
+        coordIntegerArrayList.add(loc.getBlockZ());
+        coordIntegerArrayList.add((int)loc.getYaw());
+        coordIntegerArrayList.add((int)loc.getPitch());
+
+        configManager.getConfig().set(arenaName + ".TeamSpawnPoints." + teamName +  "." + pointName + ".spawnCoord", coordIntegerArrayList);
 
         saveFile();
     }
@@ -233,6 +288,10 @@ public class Arena {
     public void deletePlayerSpawnPoint(String pointName) {
 
         configManager.getConfig().set(arenaName + ".SpawnPoints." + pointName, null);
+        configManager.saveConfig();
+
+        // Loads file before executing save method to also wipe variables
+        loadFile();
 
         saveFile();
     }
@@ -241,6 +300,10 @@ public class Arena {
     public void deleteAllPlayerSpawnPoints() {
 
         configManager.getConfig().set(arenaName + ".SpawnPoints", null);
+        configManager.saveConfig();
+
+        // Loads file before executing save method to also wipe variables
+        loadFile();
 
         saveFile();
     }
@@ -249,6 +312,10 @@ public class Arena {
     public void deleteTeamSpawnPoint(String pointName, String teamName) {
 
         configManager.getConfig().set(arenaName + ".TeamSpawnPoints." + teamName +  "." + pointName + ".spawnCoord", null);
+        configManager.saveConfig();
+
+        // Loads file before executing save method to also wipe variables
+        loadFile();
 
         saveFile();
     }
@@ -257,7 +324,12 @@ public class Arena {
     public void deleteAllTeamSpawnPoints(String teamName) {
 
         configManager.getConfig().set(arenaName + ".TeamSpawnPoints." + teamName, null);
+        configManager.saveConfig();
 
+        // Loads file before executing save method to also wipe variables
+        loadFile();
+
+        saveFile();
 
     }
 
@@ -324,23 +396,31 @@ public class Arena {
         World world = Bukkit.getWorld(worldName);
         Random rand = new Random();
 
+        // Loops through given PlayerUUID ArrayList
         for (int counter = 0; counter < playerUUIDArrayList.size(); counter++) {
 
+            // Sets the given player, randomizes an x, z, and yaw all in their respective ranges
             player = Bukkit.getPlayer(playerUUIDArrayList.get(counter));
             x = (rand.nextInt((maxX - minX) + 1) + minX);
             z = (rand.nextInt((maxZ - minZ) + 1) + minZ);
             yaw = (rand.nextInt(360));
 
+            // Loops through y within arena's range
             for (y = minY; y <= maxY; y++) {
+
+                // Checks if the player can safely be teleported to a target location
                 if ((world.getBlockAt(x, y, z).getType().toString().equals("AIR")) && (world.getBlockAt(x, (y + 1), z)
                         .getType().toString().equals("AIR")) && (world.getBlockAt(x, (y - 1), z).getType().isSolid())) {
 
                     player.teleport(new Location(world, (x + 0.5), y, (z + 0.5), yaw, 0));
+
+                    // Adds to the counter to counteract the negative counter and stops search
                     counter++;
                     break;
                 }
             }
 
+            // In the event that a location is not found, this keeps the player selected for another loop
             counter--;
         }
     }
@@ -356,15 +436,19 @@ public class Arena {
 
         while (!(foundLocation)) {
 
+            // Sets the given player, randomizes an x, z, and yaw all in their respective ranges
             x = (rand.nextInt((maxX - minX) + 1) + minX);
             z = (rand.nextInt((maxZ - minZ) + 1) + minZ);
             yaw = (rand.nextInt(360));
 
+            // Checks if the player can safely be teleported to a target location
             for (y = minY; y <= maxY; y++) {
                 if ((world.getBlockAt(x, y, z).getType().toString().equals("AIR")) && (world.getBlockAt(x, (y + 1), z)
                         .getType().toString().equals("AIR")) && (world.getBlockAt(x, (y - 1), z).getType().isSolid())) {
 
                     Bukkit.getPlayer(playerUUID).teleport(new Location(world, (x + 0.5), y, (z + 0.5), yaw, 0));
+
+                    // Stops looping through both the y and the random x, z coordinates
                     foundLocation = true;
                     break;
                 }
@@ -375,27 +459,25 @@ public class Arena {
     // Randomly spawns players at predefined spawn points
     public void randomSpawnAtSpawnPoints(ArrayList<UUID> playerUUIDArrayList) {
 
-        // Random Number Gen
         Random rand = new Random();
 
-        // Declare Variables
-        String coordString;
-        int[] coordInt;
-
-        // Create temporary Player UUID ArrayList
+        // Creates temporary Player UUID ArrayList and randomizes said ArrayList
         ArrayList<UUID>tempPlayerUUIDArrayList = new ArrayList<>(playerUUIDArrayList);
         Collections.shuffle(tempPlayerUUIDArrayList, new Random());
 
-        // Cycle through playerUUID ArrayList and 'spawn' players
+        // Creates intArray for coordinates
+        Integer[] intArray = new Integer[coordArrayList.get(0).size()];
+
+        // Cycles through playerUUID ArrayList and 'spawn' players
         int counter = 0;
         for (UUID playerUUID : tempPlayerUUIDArrayList) {
 
-            coordString = coordArrayList.get(counter);
-            coordInt = Arrays.stream(coordString.split(" ")).mapToInt(Integer::parseInt).toArray();
+            // Sequentially grabs coordinates
+            intArray = coordArrayList.get(counter).toArray(intArray);
 
-            Location loc = new Location(Bukkit.getWorld(worldName), coordInt[0], coordInt[1], coordInt[2], coordInt[3], coordInt[4]);
-
+            Location loc = new Location(Bukkit.getWorld(worldName), intArray[0], intArray[1], intArray[2], intArray[3], intArray[4]);
             Bukkit.getPlayer(playerUUID).teleport(loc);
+
             counter++;
         }
     }
@@ -405,13 +487,11 @@ public class Arena {
 
         Random rand = new Random();
 
-        String coordString;
-        int[] coordInt;
+        // Creates intArray for coordinates and randomly selects a coordinate for said ArrayList
+        Integer[] intArray = new Integer[coordArrayList.get(0).size()];
+        intArray = coordArrayList.get(rand.nextInt(coordArrayList.size())).toArray(intArray);
 
-        coordString = coordArrayList.get(rand.nextInt(coordArrayList.size()));
-        coordInt = Arrays.stream(coordString.split(" ")).mapToInt(Integer::parseInt).toArray();
-
-        Location loc = new Location(Bukkit.getWorld(worldName), coordInt[0], coordInt[1], coordInt[2], coordInt[3], coordInt[4]);
+        Location loc = new Location(Bukkit.getWorld(worldName), intArray[0], intArray[1], intArray[2], intArray[3], intArray[4]);
 
         Bukkit.getPlayer(playerUUID).teleport(loc);
     }
@@ -419,13 +499,11 @@ public class Arena {
     // Spawns a player at a predefined spawn point
     public void specificSpawnAtSpawnPoint(String spawnPointName, UUID playerUUID) {
 
-        String coordString;
-        int[] coordInt;
+        // Creates intArray for coordinates and locates index of target spawn point
+        Integer[] intArray = new Integer[coordArrayList.get(0).size()];
+        intArray = coordArrayList.get(coordNameList.indexOf(spawnPointName)).toArray(intArray);
 
-        coordString = configManager.getConfig().getString(arenaName + ".SpawnPoints." + spawnPointName + ".spawnCoord");
-        coordInt = Arrays.stream(coordString.split(" ")).mapToInt(Integer::parseInt).toArray();
-
-        Location loc = new Location(Bukkit.getWorld(worldName), coordInt[0], coordInt[1], coordInt[2], coordInt[3], coordInt[4]);
+        Location loc = new Location(Bukkit.getWorld(worldName), intArray[0], intArray[1], intArray[2], intArray[3], intArray[4]);
 
         Bukkit.getPlayer(playerUUID).teleport(loc);
     }
@@ -438,23 +516,42 @@ public class Arena {
     // Spawn a team of players at a specified spawn point
     public void spawnTeamAtSpawnPoints(ArrayList<UUID> playerUUIDArrayList) {
 
-        // WORK IN PROGRESS, REPEAT randomSpawnAtSpawnPoints FOR AN ARRAY
-        // MUST LOOP THROUGH SHIT AGAIN
-        // FIX STUPID STRING ARRAY STUFF FOR EVERYTHING LATER WHEN CONFIRMED
+        // Copies given ArrayList for local use
+        ArrayList<UUID> tempPlayerUUIDArrayList = new ArrayList<>(playerUUIDArrayList);
 
-        Team team;
-        String coordString;
-        int[] coordInt;
+        // Indexs allow both the current team and current spawn point to be selected
+        int currentTeamIndex, currentSpawnPointIndex;
+        int x, y, z, pitch, yaw;
 
-        for (UUID playerUUID : playerUUIDArrayList) {
+        // Loops through teams
+        for (Team team : M2API.TeamArrayList) {
 
-            team = M2API.teamPlayerIsOn(Bukkit.getPlayer(playerUUID));
-            if (team == null) {
-                Bukkit.getConsoleSender().sendMessage("[M2API] Player Not On A Team: " + Bukkit.getPlayer(playerUUID).getName());
-                return;
+            // Sets the currentTeamIndex to that which aligns with the team
+            // Starts the currentSpawnPointIndex at 0 for each team
+            currentTeamIndex = teamWithCoordNameList.indexOf(team.teamName);
+            currentSpawnPointIndex = 0;
+
+            // Loops through players
+            for (UUID playerUUID : tempPlayerUUIDArrayList) {
+
+                // Checks if the player is on this team
+                if (team.isPlayerOnTeam(Bukkit.getPlayer(playerUUID))) {
+
+                    // Sets coordinates
+                    x = teamsCoordArrayList.get(currentTeamIndex).get(currentSpawnPointIndex).get(0);
+                    y = teamsCoordArrayList.get(currentTeamIndex).get(currentSpawnPointIndex).get(1);
+                    z = teamsCoordArrayList.get(currentTeamIndex).get(currentSpawnPointIndex).get(2);
+                    pitch = teamsCoordArrayList.get(currentTeamIndex).get(currentSpawnPointIndex).get(3);
+                    yaw = teamsCoordArrayList.get(currentTeamIndex).get(currentSpawnPointIndex).get(4);
+
+                    Location loc = new Location(Bukkit.getWorld(worldName), x, y, z, pitch, yaw);
+                    Bukkit.getPlayer(playerUUID).teleport(loc);
+
+                    // Removes player from ArrayList and goes onto next spawn point
+                    tempPlayerUUIDArrayList.remove(playerUUID);
+                    currentSpawnPointIndex++;
+                }
             }
-
-
         }
     }
 

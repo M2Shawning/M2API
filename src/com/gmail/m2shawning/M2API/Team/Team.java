@@ -47,10 +47,10 @@ public class Team {
     }
 
     private ArrayList<UUID> playerUUIDArrayList = new ArrayList<>();
-    public boolean friendlyFire;
-    public boolean blockInteract;
-    public boolean blockPlace;
-    public boolean blockBreak;
+    protected boolean friendlyFire;
+    protected boolean blockInteract;
+    protected boolean blockPlace;
+    protected boolean blockBreak;
 
 
 
@@ -60,7 +60,11 @@ public class Team {
     // Saves the data file
     public void saveFile() {
 
-        configManager.getConfig().set(teamName + ".playerUUIDs", playerUUIDArrayList.toString());
+        // Adds playerUUIDArrayList to file in format of a String
+        // UUIDs separated by spaces and ArrayList brackets are removed
+        configManager.getConfig().set(teamName + ".playerUUIDs", playerUUIDArrayList.toString()
+                .replaceAll("\\[", "").replaceAll("\\]", "") + " ");
+
         configManager.getConfig().set(teamName + ".friendlyFire", friendlyFire);
         configManager.getConfig().set(teamName + ".blockInteract", blockInteract);
         configManager.getConfig().set(teamName + ".blockPlace", blockPlace);
@@ -79,21 +83,25 @@ public class Team {
             blockInteract = configManager.getConfig().getBoolean(teamName + ".blockInteract");
             blockPlace = configManager.getConfig().getBoolean(teamName + ".blockPlace");
             blockBreak = configManager.getConfig().getBoolean(teamName + ".blockBreak");
-
         } catch (NullPointerException e) {
 
+            e.printStackTrace();
         }
 
         try {
 
+            // Clears playerUUIDArrayList
             playerUUIDArrayList.clear();
-            for (String string : configManager.getConfig().getStringList(teamName + ".playerUUIDs")) {
 
-                playerUUIDArrayList.add(UUID.fromString(string));
+            // Loops through Array of playerUUIDs that have been gathered from a string and split up by spaces
+            for (String playerUUID : configManager.getConfig().getString(teamName + ".playerUUIDs").split(" ")) {
+
+                // Adds playerUUID to playerUUIDArrayList
+                playerUUIDArrayList.add(UUID.fromString(playerUUID));
             }
-
         } catch (NullPointerException e) {
 
+            e.printStackTrace();
         }
     }
 
@@ -112,7 +120,10 @@ public class Team {
     // Team file nodes created if not made
     public void addToTeam(UUID playerUUID) {
 
-        playerUUIDArrayList.add(playerUUID);
+        if (!(playerUUIDArrayList.contains(playerUUID))) {
+            playerUUIDArrayList.add(playerUUID);
+        }
+
         saveFile();
     }
 
@@ -133,6 +144,18 @@ public class Team {
     public ArrayList<UUID> playersOnTeam() {
 
         return playerUUIDArrayList;
+    }
+
+    // Returns the team said player is on
+    public static Team teamPlayerIsOn(Player player) {
+
+        for (Team team : M2API.TeamArrayList) {
+            if (team.isPlayerOnTeam(player)) {
+                return team;
+            }
+        }
+
+        return null;
     }
 
 
