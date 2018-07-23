@@ -4,6 +4,7 @@ import com.gmail.m2shawning.M2API.M2API;
 import com.gmail.m2shawning.M2API.Team.Team;
 import com.gmail.m2shawning.M2API.Utils.ConfigManager;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -391,6 +392,7 @@ public class Arena {
     public void spawnAtRandom(ArrayList<UUID> playerUUIDArrayList) {
 
         int x, y, z, yaw;
+        int timeoutCounter = 0;
 
         Player player;
         World world = Bukkit.getWorld(worldName);
@@ -414,10 +416,26 @@ public class Arena {
 
                     player.teleport(new Location(world, (x + 0.5), y, (z + 0.5), yaw, 0));
 
+                    // Resets timeoutCounter
+                    timeoutCounter = 0;
+
                     // Adds to the counter to counteract the negative counter and stops search
                     counter++;
                     break;
                 }
+            }
+
+            // Protects invalid Arena size from lagging server
+            timeoutCounter++;
+            if (timeoutCounter >= 100) {
+                player.sendMessage(ChatColor.RED + "[M2API] Failed To Find Suitable Location");
+                player.sendMessage(ChatColor.RED + "[M2API] Contact Staff");
+
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Timeout Protector");
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Failed To Find Suitable Location For: " + player.getName());
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Check Arena Configuration");
+
+                continue;
             }
 
             // In the event that a location is not found, this keeps the player selected for another loop

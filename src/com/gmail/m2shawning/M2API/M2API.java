@@ -17,9 +17,11 @@ public class M2API extends JavaPlugin {
 
     public void onEnable() {
 
-        if (!(Bukkit.getVersion().contains("MC: 1.12.2"))) {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[Unsupported Version]");
-            Bukkit.shutdown();
+        if (!(Bukkit.getVersion().contains("MC: 1.13"))) {
+            if (!(Bukkit.getVersion().contains("MC: 1.12"))) {
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[Unsupported Version]");
+                Bukkit.shutdown();
+            }
         }
 
         getServer().getPluginManager().registerEvents(new ArenaListener(), this);
