@@ -447,6 +447,7 @@ public class Arena {
     public void spawnAtRandom(UUID playerUUID) {
 
         int x, y, z, yaw;
+        int timeoutCounter = 0;
 
         Random rand = new Random();
         World world = Bukkit.getWorld(worldName);
@@ -466,10 +467,26 @@ public class Arena {
 
                     Bukkit.getPlayer(playerUUID).teleport(new Location(world, (x + 0.5), y, (z + 0.5), yaw, 0));
 
+                    timeoutCounter = 0;
+
                     // Stops looping through both the y and the random x, z coordinates
                     foundLocation = true;
                     break;
                 }
+            }
+
+            // Protects invalid Arena size from lagging server
+            timeoutCounter++;
+            if (timeoutCounter >= 100) {
+                Bukkit.getPlayer(playerUUID).sendMessage(ChatColor.RED + "[M2API] Failed To Find Suitable Location");
+                Bukkit.getPlayer(playerUUID).sendMessage(ChatColor.RED + "[M2API] Contact Staff");
+
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Timeout Protector");
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Failed To Find Suitable Location For: "
+                        + Bukkit.getPlayer(playerUUID).getName());
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Check Arena Configuration");
+
+                break;
             }
         }
     }
