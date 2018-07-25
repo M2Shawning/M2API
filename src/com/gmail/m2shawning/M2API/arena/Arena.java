@@ -1,8 +1,8 @@
-package com.gmail.m2shawning.M2API.Arena;
+package com.gmail.m2shawning.M2API.arena;
 
 import com.gmail.m2shawning.M2API.M2API;
-import com.gmail.m2shawning.M2API.Team.Team;
-import com.gmail.m2shawning.M2API.Utils.ConfigManager;
+import com.gmail.m2shawning.M2API.team.Team;
+import com.gmail.m2shawning.M2API.utils.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -100,7 +100,7 @@ public class Arena {
     // Loads the data file
     public void loadFile() {
 
-        // Deals with Arena variables
+        // Deals with arena variables
         try {
 
             // Read general location data from the data file
@@ -143,7 +143,7 @@ public class Arena {
             e.printStackTrace();
         }
 
-        // Deals with Team Spawn Point variables
+        // Deals with team Spawn Point variables
         try {
 
             // Creates temporary variable
@@ -156,7 +156,7 @@ public class Arena {
             // Loops through teams
             for (Team team : M2API.TeamArrayList) {
 
-                // Clears temporary variable for each team and adds Team Name to ArrayList
+                // Clears temporary variable for each team and adds team Name to ArrayList
                 tempArrayOfIntegerList.clear();
                 teamWithCoordNameList.add(team.teamName);
 
@@ -186,7 +186,7 @@ public class Arena {
 
 
 
-    // Arena Creation
+    // arena Creation
     // -----------------------------------------------------------------------------------------------------------------
 
     // Generates a the given game area
@@ -228,7 +228,7 @@ public class Arena {
 
 
 
-    // Arena Deletion
+    // arena Deletion
     // -----------------------------------------------------------------------------------------------------------------
 
     // Deletes a given game area
@@ -425,7 +425,7 @@ public class Arena {
                 }
             }
 
-            // Protects invalid Arena size from lagging server
+            // Protects invalid arena size from lagging server
             timeoutCounter++;
             if (timeoutCounter >= 100) {
                 player.sendMessage(ChatColor.RED + "[M2API] Failed To Find Suitable Location");
@@ -433,7 +433,7 @@ public class Arena {
 
                 Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Timeout Protector");
                 Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Failed To Find Suitable Location For: " + player.getName());
-                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Check Arena Configuration");
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Check arena Configuration");
 
                 continue;
             }
@@ -475,7 +475,7 @@ public class Arena {
                 }
             }
 
-            // Protects invalid Arena size from lagging server
+            // Protects invalid arena size from lagging server
             timeoutCounter++;
             if (timeoutCounter >= 100) {
                 Bukkit.getPlayer(playerUUID).sendMessage(ChatColor.RED + "[M2API] Failed To Find Suitable Location");
@@ -484,7 +484,7 @@ public class Arena {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Timeout Protector");
                 Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Failed To Find Suitable Location For: "
                         + Bukkit.getPlayer(playerUUID).getName());
-                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Check Arena Configuration");
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "[M2API] Check arena Configuration");
 
                 break;
             }
@@ -545,7 +545,7 @@ public class Arena {
 
 
 
-    // Team Spawning
+    // team Spawning
     // -----------------------------------------------------------------------------------------------------------------
 
     // Spawn a team of players at a specified spawn point

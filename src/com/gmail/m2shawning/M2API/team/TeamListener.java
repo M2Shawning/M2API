@@ -1,4 +1,4 @@
-package com.gmail.m2shawning.M2API.Team;
+package com.gmail.m2shawning.M2API.team;
 
 import com.gmail.m2shawning.M2API.M2API;
 import org.bukkit.entity.Player;

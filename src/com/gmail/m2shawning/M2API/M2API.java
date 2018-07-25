@@ -1,9 +1,9 @@
 package com.gmail.m2shawning.M2API;
 
-import com.gmail.m2shawning.M2API.Arena.Arena;
-import com.gmail.m2shawning.M2API.Arena.ArenaListener;
-import com.gmail.m2shawning.M2API.Team.Team;
-import com.gmail.m2shawning.M2API.Team.TeamListener;
+import com.gmail.m2shawning.M2API.arena.Arena;
+import com.gmail.m2shawning.M2API.arena.ArenaListener;
+import com.gmail.m2shawning.M2API.team.Team;
+import com.gmail.m2shawning.M2API.team.TeamListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;

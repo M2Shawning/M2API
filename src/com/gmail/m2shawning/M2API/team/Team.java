@@ -1,7 +1,7 @@
-package com.gmail.m2shawning.M2API.Team;
+package com.gmail.m2shawning.M2API.team;
 
 import com.gmail.m2shawning.M2API.M2API;
-import com.gmail.m2shawning.M2API.Utils.ConfigManager;
+import com.gmail.m2shawning.M2API.utils.ConfigManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -113,11 +113,11 @@ public class Team {
 
 
 
-    // Team Players
+    // team Players
     // -----------------------------------------------------------------------------------------------------------------
 
     // Adds player to team
-    // Team file nodes created if not made
+    // team file nodes created if not made
     public void addToTeam(UUID playerUUID) {
 
         if (!(playerUUIDArrayList.contains(playerUUID))) {
@@ -160,7 +160,7 @@ public class Team {
 
 
 
-    // Team Permissions
+    // team Permissions
     // -----------------------------------------------------------------------------------------------------------------
 
     // Changes friendly fire
