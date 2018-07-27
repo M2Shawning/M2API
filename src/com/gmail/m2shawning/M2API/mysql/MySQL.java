@@ -1,14 +1,13 @@
 package com.gmail.m2shawning.M2API.mysql;
 
-import com.gmail.m2shawning.M2API.M2API;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 import java.sql.*;
 
 public class MySQL {
 
-    private Connection connection;
+    private Connection connection = null;
     private String hostname, database, username, password;
     private int port;
 
@@ -26,25 +25,20 @@ public class MySQL {
     // Why couldn't the Java developer speak? Null Pointer Exception.
     // -----------------------------------------------------------------------------------------------------------------
 
-    // Triggers getConnection asynchronously
+    // Catches errors to from opening mySQL connection
     public void openConnection() {
 
-        BukkitRunnable runnable = new BukkitRunnable() {
-            @Override
-            public void run() {
-
-                try {
-                    makeConnection();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        }; runnable.runTaskAsynchronously(JavaPlugin.getPlugin(M2API.class));
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "M2API: Connecting To Database");
+        try {
+            makeConnection();
+        } catch (SQLException | NullPointerException e) {
+            e.printStackTrace();
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "M2API: Connection Failed");
+        }
     }
 
     // Opens mysql connection
-    private void makeConnection() throws SQLException {
+    private void makeConnection() throws SQLException, NullPointerException {
 
         // Checks if connection is already open
         if (connection != null && !connection.isClosed()) {
@@ -62,21 +56,29 @@ public class MySQL {
             // Creates connection
             try {
                 Class.forName("com.mysql.jdbc.Driver");
+                connection = DriverManager.getConnection("jdbc:mysql://" + hostname + ":" + port + "/" + database, username, password);
+                Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "M2API: Connected");
+
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
+                Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "M2API: Connection Failed");
             }
-
-            connection = DriverManager.getConnection("jdbc:mysql//" + hostname + ":" + port + "/" + database, username, password);
         }
     }
 
     // Closes mysql connection
     public void closeConnection() {
 
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "M2API: Closing Connection To Database");
         try {
-            connection.close();
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "M2API: Connection Closed");
+
         } catch (SQLException e) {
             e.printStackTrace();
+            Bukkit.getConsoleSender().sendMessage(ChatColor.RED + "M2API: Failed To Close");
         }
     }
 
