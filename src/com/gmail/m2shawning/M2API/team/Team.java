@@ -88,7 +88,12 @@ public class Team {
             e.printStackTrace();
         }
 
-        try {
+        playerRead: try {
+
+            // Breaks if null
+            if (configManager.getConfig().getString(teamName + ".playerUUIDs") == null) {
+                break playerRead;
+            }
 
             // Clears playerUUIDArrayList
             playerUUIDArrayList.clear();

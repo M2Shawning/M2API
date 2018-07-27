@@ -124,7 +124,12 @@ public class Arena {
         }
 
         // Deals with standard Spawn Point variables
-        try {
+        stdSpawnPoints: try {
+
+            // Breaks if null
+            if (!configManager.getConfig().contains(arenaName + ".SpawnPoints")) {
+                break stdSpawnPoints;
+            }
 
             // Clears Variables
             coordNameList.clear();
@@ -144,7 +149,12 @@ public class Arena {
         }
 
         // Deals with team Spawn Point variables
-        try {
+        teamSpawnPoints: try {
+
+            // Breaks if null
+            if (M2API.TeamArrayList == null || !configManager.getConfig().contains(arenaName + ".TeamSpawnPoints")) {
+                break teamSpawnPoints;
+            }
 
             // Creates temporary variable
             ArrayList<List<Integer>> tempArrayOfIntegerList = new ArrayList<>();
@@ -265,8 +275,6 @@ public class Arena {
 
     // Creates team spawn point
     public void createTeamSpawnPoint(String pointName, String teamName, Location loc) {
-
-        // WORK IN PROGRESS
 
         ArrayList<Integer> coordIntegerArrayList = new ArrayList<>();
         coordIntegerArrayList.add(loc.getBlockX());
