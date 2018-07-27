@@ -10,10 +10,10 @@ For those who have somehow found this API, I am not an experienced plugin develo
     - Arenas
     - Spawning
     - Teams
+    - Statistic Tracking
+- MySQL
     
 ### Planned Features
 - Minigame API
-    - Statistic Tracking
-        - SQL Support
     - ScoreBoard
     - Loadouts
