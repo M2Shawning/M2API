@@ -1,9 +1,9 @@
-package com.gitlab.m2shawning.M2API;
+package com.github.m2shawning.M2API;
 
-import com.gitlab.m2shawning.M2API.arena.Arena;
-import com.gitlab.m2shawning.M2API.arena.ArenaListener;
-import com.gitlab.m2shawning.M2API.team.Team;
-import com.gitlab.m2shawning.M2API.team.TeamListener;
+import com.github.m2shawning.M2API.arena.Arena;
+import com.github.m2shawning.M2API.arena.ArenaListener;
+import com.github.m2shawning.M2API.team.Team;
+import com.github.m2shawning.M2API.team.TeamListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;

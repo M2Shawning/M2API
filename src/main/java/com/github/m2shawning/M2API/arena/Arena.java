@@ -1,8 +1,8 @@
-package com.gitlab.m2shawning.M2API.arena;
+package com.github.m2shawning.M2API.arena;
 
-import com.gitlab.m2shawning.M2API.M2API;
-import com.gitlab.m2shawning.M2API.team.Team;
-import com.gitlab.m2shawning.M2API.utils.ConfigManager;
+import com.github.m2shawning.M2API.M2API;
+import com.github.m2shawning.M2API.team.Team;
+import com.github.m2shawning.M2API.utils.ConfigManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

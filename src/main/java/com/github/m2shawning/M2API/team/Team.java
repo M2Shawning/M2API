@@ -1,7 +1,7 @@
-package com.gitlab.m2shawning.M2API.team;
+package com.github.m2shawning.M2API.team;
 
-import com.gitlab.m2shawning.M2API.M2API;
-import com.gitlab.m2shawning.M2API.utils.ConfigManager;
+import com.github.m2shawning.M2API.M2API;
+import com.github.m2shawning.M2API.utils.ConfigManager;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;

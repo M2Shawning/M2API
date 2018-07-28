@@ -1,6 +1,6 @@
-package com.gitlab.m2shawning.M2API.team;
+package com.github.m2shawning.M2API.team;
 
-import com.gitlab.m2shawning.M2API.M2API;
+import com.github.m2shawning.M2API.M2API;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

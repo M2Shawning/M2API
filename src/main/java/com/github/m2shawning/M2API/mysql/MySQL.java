@@ -1,4 +1,4 @@
-package com.gitlab.m2shawning.M2API.mysql;
+package com.github.m2shawning.M2API.mysql;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

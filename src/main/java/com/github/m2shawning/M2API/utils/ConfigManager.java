@@ -1,4 +1,4 @@
-package com.gitlab.m2shawning.M2API.utils;
+package com.github.m2shawning.M2API.utils;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
