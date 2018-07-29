@@ -11,6 +11,7 @@ For those who have somehow found this API, I am not an experienced plugin develo
     - Spawning
     - Teams
     - Statistic Tracking
+    - Title and Action Bar Packet Sending
 - MySQL
     
 ### Planned Features
