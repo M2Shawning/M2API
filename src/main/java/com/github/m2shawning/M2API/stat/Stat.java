@@ -1,4 +1,4 @@
-package com.github.m2shawning.M2API.stats;
+package com.github.m2shawning.M2API.stat;
 
 import com.github.m2shawning.M2API.mysql.MySQL;
 import org.bukkit.entity.Player;
@@ -8,7 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Stats {
+public class Stat {
 
     private MySQL mySQL;
     private Connection connection = null;
@@ -17,7 +17,7 @@ public class Stats {
     private String table;
     private String output;
 
-    public Stats(MySQL mySQL, String table) {
+    public Stat(MySQL mySQL, String table) {
 
         this.mySQL = mySQL;
         this.table = table;
