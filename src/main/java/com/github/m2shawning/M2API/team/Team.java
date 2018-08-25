@@ -128,15 +128,12 @@ public class Team {
         if (!(playerUUIDArrayList.contains(playerUUID))) {
             playerUUIDArrayList.add(playerUUID);
         }
-
-        saveFile();
     }
 
     // Removes player from team
     public void removeFromTeam(UUID playerUUID) {
 
         playerUUIDArrayList.remove(playerUUID);
-        saveFile();
     }
 
     // Checks if player is on team

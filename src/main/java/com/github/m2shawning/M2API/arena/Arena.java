@@ -60,7 +60,7 @@ public class Arena {
 
     private int minX, minY, minZ;
     private int maxX, maxY, maxZ;
-    private String worldName;
+    public String worldName;
     protected boolean playerDamage;
     protected boolean blockInteract;
     protected boolean blockPlace;
