@@ -30,6 +30,11 @@ public class Stat {
 
         try {
 
+            preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS (?);");
+            preparedStatement.setString(1, table);
+
+            preparedStatement.executeUpdate();
+
             if (getStat(player, statName) != null) {
 
                 preparedStatement = connection.prepareStatement("UPDATE " + table + " SET " + statName + "=(?) WHERE playerUUID='" + player.getUniqueId() + "';");
