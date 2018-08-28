@@ -1,6 +1,6 @@
 package com.github.m2shawning.M2API.stat;
 
-import com.github.m2shawning.M2API.mysql.MySQL;
+import com.github.m2shawning.M2API.databases.MySQL;
 import org.bukkit.entity.Player;
 
 import java.sql.Connection;

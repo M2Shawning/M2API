@@ -1,4 +1,4 @@
-package com.github.m2shawning.M2API.mysql;
+package com.github.m2shawning.M2API.databases;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -37,7 +37,7 @@ public class MySQL {
         }
     }
 
-    // Opens mysql connection
+    // Opens MySQL connection
     private void makeConnection() throws SQLException, NullPointerException {
 
         // Checks if connection is already open
@@ -66,7 +66,7 @@ public class MySQL {
         }
     }
 
-    // Closes mysql connection
+    // Closes MySQL connection
     public void closeConnection() {
 
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + "M2API: Closing Connection To Database");
