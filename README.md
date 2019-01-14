@@ -12,7 +12,9 @@ For those who have somehow found this API, I am not an experienced plugin develo
     - Teams
     - Statistic Tracking
     - Title and Action Bar Packet Sending
-- MySQL
+- SQL
+    - MySQL
+    - SQLite
     
 ### Planned Features
 - Minigame API
