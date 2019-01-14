@@ -5,6 +5,11 @@
 .settings/*
 target/*
 *.iml
+.gradle/*
+.build/*
+gradle/*
+gradlew
+gradlew.bat
 
 *.DS_STORE
 

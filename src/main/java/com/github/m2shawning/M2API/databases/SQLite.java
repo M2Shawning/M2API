@@ -28,7 +28,7 @@ public class SQLite {
     }
 
     // SQL creation stuff, You can leave the blow stuff untouched.
-    public Connection openConnection() {
+    public void openConnection() {
 
         File dataFolder = new File(plugin.getDataFolder(), fileName +".db");
 
@@ -48,12 +48,11 @@ public class SQLite {
         try {
 
             if(connection != null && !connection.isClosed()){
-                return connection;
+                return;
             }
 
-            Class.forName("org.sqlite.jdbc4");
+            Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dataFolder);
-            return connection;
 
         } catch (SQLException ex) {
 
@@ -61,11 +60,9 @@ public class SQLite {
 
         } catch (ClassNotFoundException ex) {
 
-            plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "M2API: No JBDC Library Detected");
+            plugin.getServer().getConsoleSender().sendMessage(ChatColor.RED + "M2API: No JDBC Library Detected");
 
         }
-
-        return null;
     }
 
     // Closes databases connection

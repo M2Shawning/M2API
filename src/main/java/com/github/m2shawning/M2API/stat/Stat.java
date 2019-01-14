@@ -30,6 +30,7 @@ public class Stat {
 
         try {
 
+            // TODO FIX
             preparedStatement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS (?);");
             preparedStatement.setString(1, table);
 
