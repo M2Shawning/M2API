@@ -6,8 +6,16 @@
 
     <groupId>com.github.m2shawning</groupId>
     <artifactId>M2API</artifactId>
-    <version>1.1.0</version>
+    <version>1.0.3a</version>
     <description>Custom All-Purpose API</description>
+
+    <distributionManagement>
+        <repository>
+            <id>spigot-plugins</id>
+            <name>spigot-plugins</name>
+            <url>https://m2-maven-repo.appspot.com/</url>
+        </repository>
+    </distributionManagement>
 
     <build>
         <resources>
@@ -51,7 +59,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.13.1-R0.1-SNAPSHOT</version>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
