@@ -66,6 +66,8 @@ public class Arena {
     protected boolean blockPlace;
     protected boolean blockBreak;
 
+    private ArrayList<UUID> playerUUIDArrayList = new ArrayList<>();
+
     private ArrayList<String> coordNameList = new ArrayList<>();
     private ArrayList<List<Integer>> coordArrayList = new ArrayList<>();
 
@@ -347,6 +349,7 @@ public class Arena {
     // Player In Area Checking
     // -----------------------------------------------------------------------------------------------------------------
 
+    @Deprecated
     // Determines if player is within the given area
     public boolean isPlayerInArea(Player player) {
 
@@ -366,6 +369,7 @@ public class Arena {
         return false;
     }
 
+    @Deprecated
     // Returns an ArrayList of all player UUIDs that are within the specified area
     // Returns null if no players in playerCollection
     public ArrayList<UUID> getPlayersUUIDListInArea(Collection<? extends Player> playerCollection) {
@@ -389,6 +393,35 @@ public class Arena {
         }
 
         return tempPlayersUUIDList;
+    }
+
+    // Adds a player to Arena
+    public void addPlayerToArena(Player player) {
+        if (!(playerUUIDArrayList.contains(player.getUniqueId()))) {
+            playerUUIDArrayList.add(player.getUniqueId());
+        }
+    }
+
+    // Checks if player is in Arena
+    public boolean isPlayerInArena(Player player) {
+        return playerUUIDArrayList.contains(player.getUniqueId());
+    }
+
+    // Gets UUID list of all players in Arena
+    public List<UUID> getPlayerUUIDsInArena() {
+        return playerUUIDArrayList;
+    }
+
+    // Removes specified player from the Arena
+    public void removePlayerInArea(Player player) {
+        if (playerUUIDArrayList.contains(player.getUniqueId())) {
+            playerUUIDArrayList.remove(player.getUniqueId());
+        }
+    }
+
+    // Clears Arena of players
+    public void clearPlayersInArea() {
+        playerUUIDArrayList.clear();
     }
 
 

@@ -16,7 +16,7 @@ public class ArenaListener implements Listener {
 
         if ((event.getDamager() instanceof Player) && (event.getEntity() instanceof Player)) {
             for (Arena arena : M2API.ArenaArrayList) {
-                if ((arena.isPlayerInArea((Player)event.getEntity())) && (arena.isPlayerInArea((Player)event.getDamager()))) {
+                if ((arena.isPlayerInArena((Player)event.getEntity())) && (arena.isPlayerInArena((Player)event.getDamager()))) {
                     if (!(arena.playerDamage)) {
                         event.setCancelled(true);
                     }
@@ -29,7 +29,7 @@ public class ArenaListener implements Listener {
     public void onBlockInteract(PlayerInteractEvent event) {
 
         for (Arena arena : M2API.ArenaArrayList) {
-            if (arena.isPlayerInArea(event.getPlayer())) {
+            if (arena.isPlayerInArena(event.getPlayer())) {
                 if (!(arena.blockInteract)) {
                     event.setCancelled(true);
                 }
@@ -41,7 +41,7 @@ public class ArenaListener implements Listener {
     public void onBlockPlace(BlockPlaceEvent event) {
 
         for (Arena arena : M2API.ArenaArrayList) {
-            if (arena.isPlayerInArea(event.getPlayer())) {
+            if (arena.isPlayerInArena(event.getPlayer())) {
                 if (!(arena.blockPlace)) {
                     event.setCancelled(true);
                 }
@@ -53,7 +53,7 @@ public class ArenaListener implements Listener {
     public void onBlockBreak(BlockBreakEvent event) {
 
         for (Arena arena : M2API.ArenaArrayList) {
-            if (arena.isPlayerInArea(event.getPlayer())) {
+            if (arena.isPlayerInArena(event.getPlayer())) {
                 if (!(arena.blockBreak)) {
                     event.setCancelled(true);
                 }
